@@ -28,7 +28,7 @@ function setRequestAndResponseCookies(
 }
 
 export default async function middleware(request: NextRequest) {
-  const sessionId = request.cookies.get("__session")?.value;
+  const sessionId = request.cookies.get(Session.SESSION_COOKIE_KEY)?.value;
   let session = sessionId ? await Session.get(sessionId) : null;
 
   const isBot = isbot(request.headers.get("User-Agent"));

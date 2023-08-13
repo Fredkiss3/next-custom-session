@@ -2,7 +2,6 @@ import { preprocess, z } from "zod";
 import { nanoid } from "nanoid";
 import { kv } from "./kv";
 import type { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
-import crypto from "node:crypto";
 
 const sessionSchema = z.object({
   id: z.string(),
@@ -30,6 +29,7 @@ export class Session {
   #_session: SerializedSession;
   static LOGGED_OUT_SESSION_TTL = 1 * 24 * 60 * 60; // 1 day in seconds
   static LOGGED_IN_SESSION_TTL = 2 * 24 * 60 * 60; // 2 days in seconds
+  static SESSION_COOKIE_KEY = "__session";
 
   private constructor(serializedPayload: SerializedSession) {
     this.#_session = serializedPayload;
@@ -71,7 +71,7 @@ export class Session {
 
   public getCookie(): ResponseCookie {
     return {
-      name: "__session",
+      name: Session.SESSION_COOKIE_KEY,
       value: `${this.#_session.id}.${this.#_session.signature}`,
       expires: this.#_session.expiry,
       httpOnly: true,
@@ -119,9 +119,31 @@ export class Session {
   }
 
   static async #sign(data: string, secret: string) {
-    const hmac = crypto.createHmac("sha256", secret);
-    hmac.update(data);
-    return hmac.digest("base64");
+    const encoder = new TextEncoder();
+    const keyData = encoder.encode(secret);
+    const dataToSign = encoder.encode(data);
+
+    const importedKey = await crypto.subtle.importKey(
+      "raw",
+      keyData,
+      { name: "HMAC", hash: "SHA-256" },
+      false,
+      ["sign"]
+    );
+
+    const signature = await crypto.subtle.sign("HMAC", importedKey, dataToSign);
+
+    return this.#arrayBufferToBase64(signature);
+  }
+
+  static #arrayBufferToBase64(buffer: ArrayBuffer) {
+    let binary = "";
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
   }
 
   static async #save(session: SerializedSession) {
@@ -146,7 +168,6 @@ export class Session {
       sessionId,
       process.env.SESSION_SECRET!
     );
-
     if (signature === expectedSignature) {
       return sessionId;
     } else {
