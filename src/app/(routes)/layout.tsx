@@ -45,7 +45,7 @@ export default function RootLayout({
           </nav>
         </header>
 
-        <main className="flex min-h-screen flex-col items-center gap-8 p-5 container md:p-24">
+        <main className="flex min-h-screen flex-col items-center gap-8 p-5 container md:p-24 mx-auto">
           {children}
         </main>
       </body>
