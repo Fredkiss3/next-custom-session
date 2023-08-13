@@ -1,6 +1,7 @@
 import { preprocess, z } from "zod";
 import { nanoid } from "nanoid";
 import { kv } from "./kv";
+import type { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
 const sessionSchema = z.object({
   id: z.string(),
@@ -53,6 +54,30 @@ export class Session {
     return await Session.#create({
       isBot,
     });
+  }
+
+  public async extendValidity() {
+    this.#_session.expiry = new Date(
+      Date.now() +
+        (this.#_session.user
+          ? Session.LOGGED_IN_SESSION_TTL
+          : Session.LOGGED_OUT_SESSION_TTL) *
+          1000
+    );
+    // saving the session in the storage will reset the TTL
+    await Session.#save(this.#_session);
+  }
+
+  public getCookie(): ResponseCookie {
+    return {
+      name: "__session",
+      value: `${this.#_session.id}.${this.#_session.signature}`,
+      expires: this.#_session.expiry,
+      httpOnly: true,
+      sameSite: "lax",
+      // when testing on local, the cookies should not be set to secure
+      secure: process.env.NODE_ENV === "development" ? true : undefined,
+    };
   }
 
   static #fromPayload(serializedPayload: SerializedSession) {
