@@ -1,4 +1,4 @@
-import { RedisKVStorage } from "./redis";
+import { WebdisKVStorage } from "./redis-web";
 
 export interface KVStore {
   set<T extends Record<string, any> = {}>(
@@ -10,4 +10,4 @@ export interface KVStore {
   delete(key: string): Promise<void>;
 }
 
-export const kv: KVStore = new RedisKVStorage();
+export const kv: KVStore = new WebdisKVStorage();
