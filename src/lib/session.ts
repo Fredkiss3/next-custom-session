@@ -22,4 +22,14 @@ const sessionSchema = z.object({
 
 export type SerializedSession = z.TypeOf<typeof sessionSchema>;
 
-export class Session {}
+export class Session {
+  #_session: SerializedSession;
+
+  private constructor(serializedPayload: SerializedSession) {
+    this.#_session = serializedPayload;
+  }
+
+  static #fromPayload(serializedPayload: SerializedSession) {
+    return new Session(serializedPayload);
+  }
+}
