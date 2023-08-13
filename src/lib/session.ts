@@ -33,14 +33,30 @@ export class Session {
     this.#_session = serializedPayload;
   }
 
-  static #fromPayload(serializedPayload: SerializedSession) {
-    return new Session(serializedPayload);
+  public static async get(sessionCookieID: string) {
+    try {
+      const verifiedSessionId = await this.#verifySessionId(sessionCookieID);
+
+      const sessionObject = await kv.get(`session:${verifiedSessionId}`);
+      if (sessionObject) {
+        return Session.#fromPayload(sessionSchema.parse(sessionObject));
+      } else {
+        return null;
+      }
+    } catch (error) {
+      // In case of invalid Session ID, consider as if the session has not been found
+      return null;
+    }
   }
 
   public static async create(isBot: boolean = false) {
     return await Session.#create({
       isBot,
     });
+  }
+
+  static #fromPayload(serializedPayload: SerializedSession) {
+    return new Session(serializedPayload);
   }
 
   static async #create(options?: {
