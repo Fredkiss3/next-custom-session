@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <header className="py-4 px-5 flex justify-between items-center bg-slate-800">
+        <header className="py-4 px-5 flex justify-between items-center  bg-slate-300 dark:bg-slate-800">
           <Link className="text-2xl" href="/">
             Acme Secret Corp.
           </Link>
