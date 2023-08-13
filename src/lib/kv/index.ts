@@ -1,3 +1,5 @@
+import { RedisKVStorage } from "./redis";
+
 export interface KVStore {
   set<T extends Record<string, any> = {}>(
     key: string,
@@ -7,5 +9,5 @@ export interface KVStore {
   get<T extends Record<string, any> = {}>(key: string): Promise<T | null>;
   delete(key: string): Promise<void>;
 }
-// @ts-expect-error
-export const kv: KVStore;
+
+export const kv: KVStore = new RedisKVStorage();
