@@ -1,10 +1,12 @@
 import * as React from "react";
 import { Button } from "~/app/(components)/button";
 import { Input } from "~/app/(components)/input";
+import { FlashMessages } from "~/app/(components)/flash-message";
 
 export default function LoginPage() {
   return (
     <>
+      <FlashMessages />
       <h1 className="text-4xl">Login</h1>
 
       <form action="" className="flex flex-col gap-4 items-start">
