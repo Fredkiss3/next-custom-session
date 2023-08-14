@@ -7,20 +7,22 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db:push": "set -a; source .env.local; set +a && drizzle-kit push:pg"
+    "db:push": "set -a; source .env.local; set +a && drizzle-kit push:pg",
+    "db:studio": "set -a; source .env.local; set +a && drizzle-kit studio --port 3003 --verbose"
   },
   "dependencies": {
     "@libsql/client": "^0.3.1",
     "@types/node": "20.4.10",
     "@types/react": "18.2.20",
     "@types/react-dom": "18.2.7",
+    "argon2": "^0.31.0",
     "autoprefixer": "10.4.14",
     "drizzle-orm": "^0.28.2",
     "eslint": "8.47.0",
     "eslint-config-next": "13.4.13",
     "isbot": "^3.6.13",
     "nanoid": "^4.0.2",
-    "next": "13.4.13",
+    "next": "13.4.15",
     "postcss": "8.4.27",
     "postgres": "^3.3.5",
     "react": "18.2.0",
@@ -30,6 +32,7 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
-    "drizzle-kit": "^0.19.12"
+    "drizzle-kit": "^0.19.12",
+    "pg": "^8.11.2"
   }
 }
