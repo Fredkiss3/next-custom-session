@@ -24,13 +24,6 @@ const sessionSchema = z.object({
 });
 
 export type SerializedSession = z.TypeOf<typeof sessionSchema>;
-type RequiredSession = Required<SerializedSession>;
-type FlashMessageTypes = keyof RequiredSession["flashMessages"];
-
-export type SessionFlash = {
-  type: FlashMessageTypes;
-  message: Required<RequiredSession["flashMessages"]>[FlashMessageTypes];
-};
 
 export class Session {
   #_session: SerializedSession;
@@ -86,38 +79,6 @@ export class Session {
       // when testing on local, the cookies should not be set to secure
       secure: process.env.NODE_ENV === "development" ? true : undefined,
     };
-  }
-
-  public async addFlash(flash: SessionFlash) {
-    if (this.#_session.flashMessages) {
-      this.#_session.flashMessages[flash.type] = flash.message;
-    } else {
-      this.#_session.flashMessages = { [flash.type]: flash.message };
-    }
-
-    await Session.#save(this.#_session);
-  }
-
-  public async getFlash() {
-    const flashes = this.#_session.flashMessages;
-
-    if (!flashes) {
-      return [];
-    }
-
-    // delete flashes
-    this.#_session.flashMessages = {};
-    await Session.#save(this.#_session);
-
-    const flash = Object.entries(flashes).map(
-      ([key, value]) =>
-        ({
-          type: key,
-          message: value,
-        } as SessionFlash)
-    );
-
-    return flash;
   }
 
   static #fromPayload(serializedPayload: SerializedSession) {
