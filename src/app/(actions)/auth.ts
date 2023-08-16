@@ -29,10 +29,12 @@ export async function registerUser(formData: FormData) {
 
   if (parseResult.success) {
     const { username, password } = parseResult.data;
-    await db.insert(users).values({
-      username,
-      password: await argon2.hash(password),
-    });
+    // commented this code because it would need to do DB query, i have not deployed and setup this project
+    // online yet
+    // await db.insert(users).values({
+    //   username,
+    //   password: await argon2.hash(password),
+    // });
 
     await session.addFlash({
       type: "success",
