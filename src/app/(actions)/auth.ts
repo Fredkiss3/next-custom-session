@@ -29,10 +29,10 @@ export async function registerUser(formData: FormData) {
 
   if (parseResult.success) {
     const { username, password } = parseResult.data;
-    await db.insert(users).values({
-      username,
-      password: await argon2.hash(password),
-    });
+    // await db.insert(users).values({
+    //   username,
+    //   password: await argon2.hash(password),
+    // });
 
     await session.addFlash({
       type: "success",

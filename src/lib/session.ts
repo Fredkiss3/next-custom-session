@@ -109,6 +109,7 @@ export class Session {
     this.#_session.flashMessages = {};
     await Session.#save(this.#_session);
 
+    // Format flashes to be of type Array<{ type: 'success' | 'error' , message: string }>
     const flash = Object.entries(flashes).map(
       ([key, value]) =>
         ({
