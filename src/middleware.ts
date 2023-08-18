@@ -5,7 +5,7 @@ import type { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 
 /**
  * Set the cookies on request + response so that
- * it is immediatly accessible when calling `cookies()`
+ * it is immediatly accessible when calling `cookies()` inside server actions
  * and the cookie is set for subsequent requests
  * @param request
  * @param cookie
@@ -19,7 +19,7 @@ function setRequestAndResponseCookies(
     name: cookie.name,
     value: cookie.value,
   });
-  const response = NextResponse.rewrite(request.nextUrl, {
+  const response = NextResponse.next({
     request,
   });
 

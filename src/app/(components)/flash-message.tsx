@@ -21,7 +21,7 @@ export async function FlashMessages() {
 export function FlashMessage(props: SessionFlash) {
   return (
     <div
-      className={clsx("p-2 border rounded-md", {
+      className={clsx("p-2 border rounded-md max-w-[300px]", {
         "text-emerald-600 border-emerald-600 dark:text-emerald-500 dark:border-emerald-500":
           props.type === "success",
         "text-red-600 border-red-600 dark:text-red-400 dark:border-red-400":

@@ -58,10 +58,30 @@ export class Session {
     }
   }
 
-  public static async create(isBot: boolean = false) {
-    return await Session.#create({
-      isBot,
+  async generateForUser(user: { id: number }) {
+    // delete the old session
+    await Session.#delete(this.#_session);
+
+    // create a new one with a user
+    this.#_session = await Session.#create({
+      init: {
+        flashMessages: this.#_session.flashMessages,
+        extras: this.#_session.extras,
+        user: {
+          id: user.id.toString(),
+        },
+      },
     });
+
+    await Session.#save(this.#_session);
+  }
+
+  public static async create(isBot: boolean = false) {
+    return Session.#fromPayload(
+      await Session.#create({
+        isBot,
+      })
+    );
   }
 
   public async extendValidity() {
@@ -98,6 +118,13 @@ export class Session {
     await Session.#save(this.#_session);
   }
 
+  static async #delete(session: SerializedSession) {
+    const verifiedSessionId = await Session.#verifySessionId(
+      `${session.id}.${session.signature}`
+    );
+    await kv.delete(`session:${verifiedSessionId}`);
+  }
+
   public async getFlash() {
     const flashes = this.#_session.flashMessages;
 
@@ -119,6 +146,35 @@ export class Session {
     );
 
     return flash;
+  }
+
+  /**
+   * add form data, their type is :
+   * ```
+   * {
+   *  data?: Record<string, any> | null | undefined;
+   *  errors?: Record<string, string[]> | null | undefined;
+   * } | null
+   * ```
+   * @param form
+   * @returns
+   */
+  public async addFormData(form: RequiredSession["formData"]) {
+    this.#_session.formData = form;
+    await Session.#save(this.#_session);
+  }
+
+  public async getFormData() {
+    const data = this.#_session.formData;
+
+    if (!data) {
+      return null;
+    }
+
+    // delete formData when accessed
+    this.#_session.formData = null;
+    await Session.#save(this.#_session);
+    return data;
   }
 
   static #fromPayload(serializedPayload: SerializedSession) {
@@ -146,7 +202,7 @@ export class Session {
     } satisfies SerializedSession;
 
     await Session.#save(sessionObject);
-    return Session.#fromPayload(sessionObject);
+    return sessionObject;
   }
 
   static async #generateSessionId() {

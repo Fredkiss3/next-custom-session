@@ -2,8 +2,6 @@
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
-export type ClearFlashProps = {};
-
 /**
  * This component is needed because nextjs cache pages
  * and that means the flash message will always show.
@@ -12,7 +10,7 @@ export type ClearFlashProps = {};
  * @param param0
  * @returns
  */
-export function ClearFlash({}: ClearFlashProps) {
+export function ClearFlash() {
   const router = useRouter();
   React.useEffect(() => {
     return () => {
