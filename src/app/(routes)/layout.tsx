@@ -1,7 +1,9 @@
 import "./globals.css";
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import Link from "next/link";
+import { Inter } from "next/font/google";
+import { getSession } from "~/app/(actions)/auth";
+
+import type { Metadata } from "next";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -12,15 +14,17 @@ export const metadata: Metadata = {
 
 export const revalidate = 0;
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // get the current authenticated user
+  const user = await getSession().then((session) => session.user);
   return (
     <html lang="en">
       <body className={inter.className}>
-        <header className="py-4 px-5 flex justify-between items-center  bg-slate-300 dark:bg-slate-800">
+        <header className="py-4 px-5 flex justify-between items-center bg-slate-300 dark:bg-slate-800">
           <Link className="text-2xl" href="/">
             Acme Secret Corp.
           </Link>
@@ -31,16 +35,33 @@ export default function RootLayout({
                   Home
                 </Link>
               </li>
-              <li>
-                <Link href="/login" className="underline">
-                  Login
-                </Link>
-              </li>
-              <li>
-                <Link href="/register" className="underline">
-                  Register
-                </Link>
-              </li>
+              {user ? (
+                <>
+                  <li>
+                    <Link href="/dashboard" className="underline">
+                      Dashboard
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/dashboard/account" className="underline">
+                      Account
+                    </Link>
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li>
+                    <Link href="/login" className="underline">
+                      Login
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/register" className="underline">
+                      Register
+                    </Link>
+                  </li>
+                </>
+              )}
             </ul>
           </nav>
         </header>

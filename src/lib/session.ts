@@ -181,6 +181,23 @@ export class Session {
     return new Session(serializedPayload);
   }
 
+  public get user() {
+    return this.#_session.user;
+  }
+
+  public async invalidate() {
+    // delete the old session
+    await Session.#delete(this.#_session);
+
+    // create a new one & pass along flash messages and extra information stored in the session
+    this.#_session = await Session.#create({
+      init: {
+        flashMessages: this.#_session.flashMessages,
+        extras: this.#_session.extras,
+      },
+    });
+  }
+
   static async #create(options?: {
     init?: Pick<SerializedSession, "flashMessages" | "extras" | "user">;
     isBot?: boolean;
