@@ -28,6 +28,14 @@ function setRequestAndResponseCookies(
 }
 
 export default async function middleware(request: NextRequest) {
+  const time = new Date();
+  const accept = request.headers.get("accept");
+  const fullPath =
+    request.nextUrl.pathname + request.nextUrl.search + request.nextUrl.hash;
+  console.log(
+    `\n${time.toISOString()} - \x1b[34m${request.method.toUpperCase()} \x1b[33m${fullPath}\x1b[37m [accept: ${accept}]`
+  );
+
   const sessionId = request.cookies.get(Session.SESSION_COOKIE_KEY)?.value;
   let session = sessionId ? await Session.get(sessionId) : null;
 
@@ -46,7 +54,15 @@ export default async function middleware(request: NextRequest) {
     return setRequestAndResponseCookies(request, session.getCookie());
   }
 
-  return NextResponse.next();
+  // Pass method to headers so that it is accessible within components
+  const headers = new Headers(request.headers);
+  headers.set("x-method", request.method.toUpperCase());
+
+  return NextResponse.next({
+    request: {
+      headers,
+    },
+  });
 }
 
 export const config = {

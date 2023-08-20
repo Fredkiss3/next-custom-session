@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Button } from "~/app/(components)/button";
 import { Input } from "~/app/(components)/input";
-import { FlashMessages } from "~/app/(components)/flash-message";
 import Link from "next/link";
 import { getSession, loginUser } from "~/app/(actions)/auth";
 
@@ -11,7 +10,6 @@ export default async function LoginPage() {
 
   return (
     <>
-      <FlashMessages />
       <h1 className="text-4xl">Login</h1>
 
       <form

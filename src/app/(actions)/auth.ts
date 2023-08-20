@@ -59,6 +59,9 @@ export async function loginUser(formData: FormData) {
     } else {
       // Generate the session for the user & send the new cookie to the client
       await session.generateForUser(existingUsers[0]);
+      console.log({
+        action: session.getCookie().value,
+      });
       cookies().set(session.getCookie());
 
       // add a flash message for success case
@@ -66,6 +69,7 @@ export async function loginUser(formData: FormData) {
         type: "success",
         message: "You are now logged in, you can have access to your dashboard",
       });
+      return redirect("/dashboard");
     }
   } else {
     // add form errors for error case
@@ -131,6 +135,8 @@ export async function registerUser(formData: FormData) {
         type: "success",
         message: "Account created successfully",
       });
+
+      return redirect("/login");
     }
   } else {
     // add form errors for error case
@@ -230,6 +236,7 @@ export async function udpdateAccountInfos(formData: FormData) {
         type: "success",
         message: "Username updated successfully",
       });
+      return redirect("/dashboard/account");
     }
   } else {
     // add form errors for error case
@@ -265,4 +272,5 @@ export async function logoutUser() {
   });
 
   cookies().set(session.getCookie());
+  return redirect("/login");
 }

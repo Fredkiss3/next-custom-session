@@ -8,7 +8,6 @@ import {
 } from "~/app/(actions)/auth";
 import { Button } from "~/app/(components)/button";
 import { Input } from "~/app/(components)/input";
-import { FlashMessages } from "~/app/(components)/flash-message";
 
 export default async function DashboardPage() {
   // get the current authenticated user & redirect to login if not authenticated
@@ -23,7 +22,6 @@ export default async function DashboardPage() {
 
   return (
     <>
-      <FlashMessages />
       <h1 className="text-4xl">Update your account info</h1>
 
       <form

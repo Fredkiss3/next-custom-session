@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import { getSession } from "~/app/(actions)/auth";
 
 import type { Metadata } from "next";
+import { FlashMessages } from "~/app/(components)/flash-message";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,7 +21,12 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   // get the current authenticated user
-  const user = await getSession().then((session) => session.user);
+  const user = await getSession().then((session) => {
+    console.log({
+      layout: session.getCookie().value,
+    });
+    return session.user;
+  });
   return (
     <html lang="en">
       <body className={inter.className}>
@@ -37,6 +43,11 @@ export default async function RootLayout({
               </li>
               {user ? (
                 <>
+                  <li>
+                    <Link href="/login" className="underline">
+                      Login
+                    </Link>
+                  </li>
                   <li>
                     <Link href="/dashboard" className="underline">
                       Dashboard
@@ -67,6 +78,7 @@ export default async function RootLayout({
         </header>
 
         <main className="flex min-h-screen flex-col items-center gap-8 p-5 container md:p-24 mx-auto">
+          <FlashMessages />
           {children}
         </main>
       </body>

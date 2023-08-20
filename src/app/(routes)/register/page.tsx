@@ -2,7 +2,6 @@ import * as React from "react";
 import { Button } from "~/app/(components)/button";
 import { Input } from "~/app/(components)/input";
 import { getSession, registerUser } from "~/app/(actions)/auth";
-import { FlashMessages } from "~/app/(components)/flash-message";
 import Link from "next/link";
 
 export default async function RegisterPage() {
@@ -11,7 +10,6 @@ export default async function RegisterPage() {
 
   return (
     <>
-      <FlashMessages />
       <h1 className="text-4xl">Register</h1>
 
       <form

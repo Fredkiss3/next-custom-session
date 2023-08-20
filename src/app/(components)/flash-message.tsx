@@ -1,34 +1,20 @@
 import * as React from "react";
-import { clsx } from "~/lib/utils";
 import { getSession } from "~/app/(actions)/auth";
-import { ClearFlash } from "./clear-flash";
+import { headers } from "next/headers";
+import { FlashMessageClient } from "./flash-message.client";
 
-import type { SessionFlash } from "~/lib/session";
 export async function FlashMessages() {
+  // ignore HEAD requests because
+  // next use them for redirects and rerender the page twice
+  if (headers().get("x-method") === "HEAD") return null;
+
   const flashes = await getSession().then((session) => session.getFlash());
 
   return (
     <>
       {flashes.map((flash) => (
-        <FlashMessage key={flash.type} {...flash} />
+        <FlashMessageClient key={Math.random()} {...flash} />
       ))}
-
-      <ClearFlash />
     </>
-  );
-}
-
-export function FlashMessage(props: SessionFlash) {
-  return (
-    <div
-      className={clsx("p-2 border rounded-md max-w-[300px]", {
-        "text-emerald-600 border-emerald-600 dark:text-emerald-500 dark:border-emerald-500":
-          props.type === "success",
-        "text-red-600 border-red-600 dark:text-red-400 dark:border-red-400":
-          props.type === "error",
-      })}
-    >
-      {props.message}
-    </div>
   );
 }
