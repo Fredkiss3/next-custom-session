@@ -69,6 +69,7 @@ export async function loginUser(formData: FormData) {
         type: "success",
         message: "You are now logged in, you can have access to your dashboard",
       });
+      revalidatePath("/");
       return redirect("/dashboard");
     }
   } else {
@@ -136,6 +137,7 @@ export async function registerUser(formData: FormData) {
         message: "Account created successfully",
       });
 
+      revalidatePath("/");
       return redirect("/login");
     }
   } else {
