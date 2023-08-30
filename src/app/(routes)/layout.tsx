@@ -21,12 +21,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   // get the current authenticated user
-  const user = await getSession().then((session) => {
-    console.log({
-      layout: session.getCookie().value,
-    });
-    return session.user;
-  });
+  const user = await getSession().then((session) => session.user);
   return (
     <html lang="en">
       <body className={inter.className}>
